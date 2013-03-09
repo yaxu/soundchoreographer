@@ -3,7 +3,8 @@ soundchoreographer
 
 (c) Kate Sicchio and Alex McLean, 2013
 
-Sound choreographer component of body <> code by Sicchio and McLean.
+Sound choreographer component of sound choreography <> body code by Sicchio 
+and McLean.
 
 Written in Processing, requires minim library.
 

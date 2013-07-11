@@ -8,7 +8,7 @@ class Score {
     //double[img.width] values; 
     for (int x = 0; x < img.width; ++x) {
       values[x] = 0;
-      for (int y = 0; y < img.height; ++y) {
+      for (int y = (img.height -1); y >= 0; --y) {
         if (img.pixels[x + (y*img.width)] == black) {
           values[x] = (float) (img.height - y) / (float) img.height;
           break;

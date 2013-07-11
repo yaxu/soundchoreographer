@@ -1,3 +1,6 @@
+import oscP5.*;
+import netP5.*;
+
 import ddf.minim.spi.*;
 import ddf.minim.signals.*;
 import ddf.minim.*;
@@ -8,7 +11,7 @@ import ddf.minim.effects.*;
 ArrayList is = new ArrayList();
 ArrayList cs = new ArrayList();
 
-int duration = 120; 
+int duration = 60 * 15; 
 int start;
 
 int maxInstructions = 100;
@@ -17,6 +20,8 @@ float position = 0;
 Score changeScore;
 Score intensityScore;
 
+NetAddress texture;
+
 AudioInput src;
 
 Minim minim;
@@ -24,10 +29,12 @@ BeatDetect bd;
 BeatListener bl;
 Tree tree;
 int onsets = 0;
+OscP5 oscP5;
+
 
 void setup() {
   frameRate(20);
-  size(768, 768, P2D);
+  size(1024, 768, P2D);
   smooth();
   
   start = millis();
@@ -49,11 +56,16 @@ void setup() {
   textAlign(CENTER);
   
   tree = new Tree(is);
+  oscP5 = new OscP5(this,12000);
+  texture = new NetAddress("192.168.43.87",1234);
 }
 
 void stop() {
   src.close();
   minim.stop();
+
+  oscP5.send(new OscMessage("/kill"), texture); 
+
   super.stop();
 }
 
@@ -77,8 +89,10 @@ void syncInstructions(int n) {
 }
 
 void showClock(float position) {
-  stroke(44, 117, 255,50);
+  stroke(44, 117, 255,200);
+  strokeWeight(1);
   intensityScore.show(200);
+  stroke(44, 117, 255,200);
   changeScore.show(200);
   strokeWeight(5);
   stroke(90,90,90,150);
@@ -87,13 +101,13 @@ void showClock(float position) {
   float x = cos(TWO_PI * position - HALF_PI);
   float y = sin(TWO_PI * position - HALF_PI);
   line(w,h,w+x*w*0.9,h+y*h*0.9);
-  strokeWeight(1.5);
+  
   
   float intensity = intensityScore.at(position);
   float change = changeScore.at(position);
 
-  fill(150,150,150,150);
-  textSize(11);
+  fill(200,200,200);
+  textSize(14);
   textAlign(LEFT);
 
   float x2 = (w+(x*intensity*w));
@@ -113,6 +127,8 @@ void draw() {
   fill(255);
   position = (millis() / 1000.0) / (float) duration;
   if (position > 1) {
+    oscP5.send(new OscMessage("/kill"), texture); 
+    noLoop();
     return;
   }
   
